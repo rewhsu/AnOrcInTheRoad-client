@@ -51,7 +51,7 @@ import { Font } from 'exponent';
 
 let redirectUri;
 if (Exponent.Constants.manifest.xde) {
-  redirectUri = `exp://9k-ndi.rewhsu.app.exp.direct/+/redirect`;
+  redirectUri = `exp://6g-6is.rewhsu.app.exp.direct/+/redirect`;
 } else {
     console.log('CONSTANTS MANIFEST ',Exponent.Constants.linkingUri)
   redirectUri = `${Exponent.Constants.linkingUri}/redirect`;
@@ -59,7 +59,7 @@ if (Exponent.Constants.manifest.xde) {
 
 const auth0ClientId = 'vDeBBemEERpMdpAG24zlAdIg2CCIWiQ2';
 const auth0Domain = 'https://originalorcs.auth0.com';
-
+createLocationWatcher();
 store.dispatch(updateLocation()).then(() =>
   console.log('MAIN STATE', store.getState())
 );
