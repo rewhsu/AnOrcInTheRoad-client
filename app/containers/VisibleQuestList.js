@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { addQuest, updateLocation, addWatcher, toggleQuest, updateQuests } from '../actions/actions';
+import { addQuest, updateLocation, addWatcher, toggleQuest, updateQuests, startQuickDraw } from '../actions/actions';
 import quests from '../constants/quests.json';
 import QuestList from '../components/QuestList';
 import * as Exponent from 'exponent';
@@ -57,6 +57,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     fetchQuests: (charId) => {
       socket.emit('get quests', charId);
+    },
+    onStartQuickDraw: () => {
+      dispatch(startQuickDraw());
     },
   };
 };

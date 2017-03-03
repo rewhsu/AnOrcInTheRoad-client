@@ -126,6 +126,15 @@ class QuestList extends React.Component {
         <View style={styles.createQuest}>
           <QuestCreate onSubmitQuest={this.props.onSubmitQuest} user={this.props.user} lat={this.props.lat} lng={this.props.lng} />
         </View>
+        <TouchableHighlight
+          onPress={() => {
+            this.props.onStartQuickDraw();
+            this.props.handleCreateOrClose();
+          }}
+          style={styles.submitButton}
+        >
+          <Text style={styles.buttonText}>Create Character</Text>
+        </TouchableHighlight>
         <View style={styles.container}>
           <View style={styles.createQuest}>
           {this.props.quests ?

@@ -51,7 +51,7 @@ import { Font } from 'exponent';
 
 let redirectUri;
 if (Exponent.Constants.manifest.xde) {
-  redirectUri = `exp://6g-6is.rewhsu.app.exp.direct/+/redirect`;
+  redirectUri = `exp://8i-hja.rewhsu.app.exp.direct/+/redirect`;
 } else {
     console.log('CONSTANTS MANIFEST ',Exponent.Constants.linkingUri)
   redirectUri = `${Exponent.Constants.linkingUri}/redirect`;
