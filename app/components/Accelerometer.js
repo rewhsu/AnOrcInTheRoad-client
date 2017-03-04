@@ -111,7 +111,6 @@ class AccelerometerSensor extends React.Component {
     if (!this.state.zingFault) {
       this.startRandomTimeout(3000);
     } else {
-      // Alert.alert('you suck');
       this.resetState();
     }
   }

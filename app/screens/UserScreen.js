@@ -16,6 +16,8 @@ import UserProfile from '../containers/UserProfileContainer';
 import users from '../constants/users';
 import stats from '../constants/stats';
 import GyroscopeSensor from '../components/Gyroscope';
+import CardGameContainer from '../containers/CardGameContainer';
+
 // import AccelerometerSensor from '../components/Accelerometer';
 import AccelerometerContainer from '../containers/AccelerometerContainer';
 
@@ -38,6 +40,7 @@ export default class HomeScreen extends React.Component {
       <View style={styles.container}>
         <ScrollView>
           <AccelerometerContainer />
+          <CardGameContainer />
           <UserProfile users={users} stats={stats} />
         </ScrollView>
       </View>
