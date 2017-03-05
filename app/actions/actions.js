@@ -17,13 +17,6 @@ export const addQuest = (name, location, questType, experience, lat, lng, creato
   };
 };
 
-// export const toggleQuest = (id) => {
-//   return {
-//     type: 'TOGGLE_QUEST',
-//     id,
-//   };
-// };
-
 export const userLogin = (name, user_id) => {
   return {
     type: 'USER_LOGIN',
@@ -108,3 +101,31 @@ export function updateLocation() {
       .then(result => dispatch(receiveLocation(result.coords)));
   };
 }
+
+export const updateRoomData = (data) => {
+  return {
+    type: 'UPDATE_ROOM_DATA',
+    data,
+  };
+};
+
+export const updateRoomMemberData = (data) => {
+  return {
+    type: 'UPDATE_ROOM_MEMBER_DATA',
+    data,
+  };
+};
+
+export const setTeam = (team) => {
+  return {
+    type: 'SET_TEAM',
+    team,
+  };
+};
+
+export const setRoom = (room) => {
+  return {
+    type: 'SET_ROOM',
+    room,
+  };
+};
