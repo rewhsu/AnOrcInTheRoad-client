@@ -200,11 +200,11 @@ class CardGameRound extends React.Component {
                 <Text>Submit Points</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.buttonContainer}>
+            {/*<View style={styles.buttonContainer}>
               <TouchableOpacity onPress={() => this.createRoundResult(this.props.round)} style={styles.button}>
                 <Text>calculateRoundResult</Text>
               </TouchableOpacity>
-            </View>
+            </View>*/}
           </View>
           : null }
         </View>

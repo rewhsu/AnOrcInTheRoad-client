@@ -305,18 +305,40 @@ class CardGame extends React.Component {
         <Text>
           This is the Card Game
         </Text>
+        <TextInput
+            style={styles.input}
+            onChangeText={(text) => this.setState({ roomInput: text })}
+            placeholder="Room Name"
+            value={this.state.roomInput}
+            maxLength = {60}
+            autoCorrect = {false}
+            returnKeyType = {'done'}
+        />  
         <Text>
           Room Id: {this.props.room}
         </Text>    
+        <TouchableOpacity onPress={() => this.setRoom(this.state.roomInput)} style={styles.button}>
+          <Text>Set Room</Text>
+        </TouchableOpacity>
         <Text>
           Rounds: {this.props.rounds}
         </Text>
         <Text>
-          Team: {this.props.team} 
+          Team: {this.props.team}
         </Text>
+        <TouchableOpacity onPress={() => this.toggleTeam()} style={styles.button}>
+          <Text>Toggle Team</Text>
+        </TouchableOpacity>
         <Text>
-          Team 1:
+          User id: {this.props.user.char_id}
         </Text>
+        {rounds}
+        <TouchableOpacity onPress={() => this.updateHp()} style={styles.button}>
+          <Text>Update Room</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => this.getResults()} style={styles.button}>
+          <Text>Get Results</Text>
+        </TouchableOpacity>
         {this.props.room ?
           <View>
             <Text>Team Totals</Text>
@@ -345,33 +367,6 @@ class CardGame extends React.Component {
             <CardGameResults roomGameData={this.state.t2r3Net} />
           </View>
         : null}
-        <TextInput
-            style={styles.input}
-            onChangeText={(text) => this.setState({ roomInput: text })}
-            placeholder="Room Name"
-            value={this.state.roomInput}
-            maxLength = {60}
-            autoCorrect = {false}
-            returnKeyType = {'done'}
-        />  
-        <View>
-          <TouchableOpacity onPress={() => this.setRoom(this.state.roomInput)} style={styles.button}>
-            <Text>Set Room</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.toggleTeam()} style={styles.button}>
-            <Text>Toggle Team</Text>
-          </TouchableOpacity>
-        </View>
-        <Text>
-          User id: {this.props.user.char_id}
-        </Text>
-        {rounds}
-        <TouchableOpacity onPress={() => this.updateHp()} style={styles.button}>
-          <Text>Update Room</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => this.getResults()} style={styles.button}>
-          <Text>Get Results</Text>
-        </TouchableOpacity>
       </View>
     );
   }
