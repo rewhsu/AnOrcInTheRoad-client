@@ -32,7 +32,6 @@ class QuickDraw extends React.Component {
       result: null,
       zingLegit: false,
       modalVisible: false,
-      roundFinished: false,
     };
   }
 
@@ -112,7 +111,10 @@ class QuickDraw extends React.Component {
 
   startCountdown() {
     const context = this;
-    this._unsubscribe();
+    if (context.state.gameStarted) {
+      context.setState({ zingFault: true });
+    }
+    context._unsubscribe();
     context.setState({
       gameStarted: true,
       countdownStarted: true,
@@ -120,7 +122,7 @@ class QuickDraw extends React.Component {
     });
     setTimeout(() => {
      context.validateCountdown();
-    }, 3000)
+    }, 3000);
   }
 
   validateCountdown() {

@@ -2,6 +2,9 @@ import React from 'react';
 import { View, StyleSheet, Text, TouchableHighlight, Alert } from 'react-native';
 import socket from '../socket/socket';
 import { Font } from 'exponent';
+import QuickDrawContainer from '../containers/QuickDrawContainer';
+import BattleGameContainer from '../containers/BattleGameContainer';
+import FetchQuestInput from '../components/FetchQuestInput';
 
 const styles = StyleSheet.create({
   container: {
@@ -41,6 +44,10 @@ class QuestRow extends React.Component {
     this.state = {
       showDetails: false,
       isSelected: false,
+      quickDrawVisible: false,
+      battleQuestVisible: false,
+      fetchQuestVisible: false,
+      distanceMiles: null,
     };
   }
 
@@ -48,6 +55,14 @@ class QuestRow extends React.Component {
     if (this.props.quest.active) {
       this.setState({ isSelected: true });
     }
+    if (this.props.quest.questType === 'addQuickDrawQuest') {
+      this.setState({quickDrawVisible: true});
+    } else if (this.props.quest.questType === 'addBattleQuest') {
+      this.setState({battleQuestVisible: true});
+    } else if (this.props.quest.questType === 'addFetchQuest') {
+      this.setState({fetchQuestVisible: true});
+    }
+    this.setState({ distanceMiles: this.convertDistanceToMiles(this.props.dist) });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -75,16 +90,43 @@ class QuestRow extends React.Component {
   handleToggle() {
      console.log('STATE IS SELECTED from HANDLE: ', this.state.isSelected);
     this.props.toggleQuest(this.props.id, this.props.quest.id, this.state.isSelected);
+    this.checkIfComplete(this.state.distanceMiles);
   }
 
-  checkIfComplete(distanceMiles) {
-    if (distanceMiles < 0.1 && this.state.isSelected) {
-      console.log('quest completed: ', this.props.quest.id);
-      socket.emit('complete quest', this.props.id, this.props.quest.id);
-      Alert.alert('Completed Quest!');
+  checkIfComplete() {
+    if (this.state.distanceMiles < 0.1 && this.state.isSelected) {
+      this.processQuest();
     }
   }
 
+  processQuest() {
+    if (this.props.quest.questType === 'addFetchQuest') {
+      console.log('quest completed: ', this.props.quest.id);
+      socket.emit('complete quest', this.props.id, this.props.quest.id);
+      Alert.alert('Completed Quest!');
+    } else if (this.props.quest.questType === 'addBattleQuest') {
+      console.log('PROCESSING BATTLE QUEST');
+    } else if (this.props.quest.questType === 'addQuickDrawQuest') {
+      console.log('PROCESSING QUICK DRAW QUEST');
+    }
+  }
+
+  submitQuest(questType) {
+    var context = this;
+    this.props.submitQuest(
+      context.props.quest.name,
+      context.props.quest.location,
+      context.props.quest.questType,
+      context.props.quest.experience,
+      context.props.quest.lat,
+      context.props.quest.lng,
+      context.props.id,
+      context.state.attack,
+      context.state.defense,
+      context.state.speed,
+    );
+    context.setModalVisible(false);
+  }
 
   render() {
     console.log('STATE IS SELECTED: ', this.state.isSelected);
@@ -92,8 +134,6 @@ class QuestRow extends React.Component {
       console.log('You have pressed row');
     };
     console.log('ROW PROPS: ', this.props);
-    var distanceMiles = this.convertDistanceToMiles(this.props.dist);
-    this.checkIfComplete(distanceMiles);
     return (
       <TouchableHighlight onPress={() => this.handleSelect()} underlayColor='white'>
         <View style={[styles.container, this.state.isSelected ? { backgroundColor: '#0eb27e' } : {}]} >
@@ -102,12 +142,28 @@ class QuestRow extends React.Component {
           </Text>
           {this.props.showDetails ?
           <View /*onPress={() => this.props.toggleQuest(this.props.quest.id)}*/>
-            {/*<Text style={styles.subtitle}>{this.props.quest.questType}</Text>*/}
-            <Text style={styles.label}>{distanceMiles} Miles</Text>
-            {/*<Text style={styles.subtitle}>Lat: {this.props.quest.lat} | Lng: {this.props.quest.lng} </Text>*/}
+            <Text style={styles.label}>{this.state.distanceMiles} Miles</Text>
             <Text style={styles.label}>Rewards: {this.props.quest.experience} EXP</Text>
           </View>
-        : null}
+          : null}
+          {this.state.quickDrawVisible ?
+          <View>
+            <QuickDrawContainer />
+          </View>
+          : null}
+          {this.state.battleQuestVisible ?
+          <View>
+            <BattleGameContainer />
+          </View>
+          : null}
+          {this.state.fetchQuestVisible ?
+          <View>
+            <FetchQuestInput />
+          </View>
+          : null}
+          <TouchableHighlight onPress={() => this.submitQuest()} style={styles.closeButton} >
+              <Text style={styles.buttonText}>Submit</Text>
+            </TouchableHighlight>
         </View>
       </TouchableHighlight>
     );

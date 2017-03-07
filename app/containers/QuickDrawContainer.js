@@ -26,11 +26,6 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(newQuest);
       socket.emit('create quest', newQuest);
     },
-    // addPartialQuestInfo: (name, location, questType, experience, latitude, longitude, creator_id, atk, def, drawSpeed) => {
-    //   var newQuest = storeCreateQuestInput(name, location, questType, experience, latitude, longitude, creator_id, atk, def, drawSpeed);
-    //   console.log('add partial', newQuest);
-    //   dispatch(newQuest);
-    // },
     saveScore: (score) => {
       dispatch(setQuestType('addQuickDrawQuest'));
       dispatch(newDrawSpeed(score));

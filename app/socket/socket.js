@@ -15,7 +15,7 @@ import { store } from '../main';
 // const socket = io('http://10.230.188.203:3000');
 // const socket = io('http://10.7.24.229:3000');
 // const socket = io('http://10.242.64.77:3000');
-const socket = io('http://10.242.96.172:3000');
+const socket = io('http://10.7.24.229:3000');
 
 socket.on('trigger update quests', () => {
   socket.emit('get quests', store.getState().user.char_id);
