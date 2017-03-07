@@ -2,7 +2,7 @@ import Exponent from 'exponent';
 
 let nextQuestId = 0;
 
-export const addQuest = (name, location, questType, experience, lat, lng, creator_id, item_id) => {
+export const addQuest = (name, location, questType, experience, lat, lng, creator_id, attack, defense, drawSpeed) => {
   return {
     type: 'ADD_QUEST',
     id: nextQuestId++,
@@ -13,7 +13,9 @@ export const addQuest = (name, location, questType, experience, lat, lng, creato
     lat,
     lng,
     creator_id,
-    item_id,
+    attack,
+    defense,
+    drawSpeed,
   };
 };
 
@@ -129,3 +131,45 @@ export const setRoom = (room) => {
     room,
   };
 };
+
+export const setPoints = (points) => {
+  return {
+    type: 'SET_POINTS',
+    points,
+  };
+};
+
+export const setBattleStats = (attack, defense) => {
+  return {
+    type: 'SET_BATTLE_STATS',
+    attack,
+    defense,
+  };
+};
+
+export const storeCreateQuestInput = (name, location, questType, experience, creator_id) => {
+  return {
+    type: 'STORE_CREATE_QUEST_INPUT',
+    id: nextQuestId++,
+    name,
+    location,
+    questType,
+    experience,
+    creator_id,
+  };
+};
+
+export const newDrawSpeed = (speed) => {
+  return {
+    type: 'SET_NEW_DRAW_SPEED',
+    speed,
+  };
+};
+
+export const setQuestType = (questType) => {
+  return {
+    type: 'SET_CURRENT_QUEST_TYPE',
+    questType,
+  };
+};
+

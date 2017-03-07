@@ -4,6 +4,8 @@ import { Font } from 'exponent';
 import socket from '../socket/socket';
 import CardGameRoundContainer from '../containers/CardGameRoundContainer';
 import CardGameResults from './CardGameResults';
+import CardGameCreate from './CardGameCreate';
+import CardGameCreateContainer from '../containers/CardGameCreateContainer';
 
 class CardGame extends React.Component {
   constructor(props) {
@@ -29,18 +31,22 @@ class CardGame extends React.Component {
       team: 1,
       team1Results: null,
       team2Results: null,
+      totalPoints: this.props.points,
     };
   }
 
   componentDidMount() {
-    this.generateRounds();
     socket.emit('get room results', this.props.room);
     socket.emit('get room members', this.props.room);
+    socket.emit('get character', this.props.user.char_id);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.user.level !== this.props.user.level) {
-      this.setState({pointsLeft: nextProps.user.level + 10});
+    if (nextProps.user !== this.props.user) {
+      this.setState({
+        pointsLeft: nextProps.user.level + 10,
+        totalPoints: (nextProps.user.level + 10) * 3,
+      });
     }
     if (nextProps.roomGameData !== this.props.roomGameData) {
       this.calculateWinner(nextProps.roomGameData);
@@ -52,9 +58,16 @@ class CardGame extends React.Component {
     if (nextProps.team != this.props.team) {
       this.setState({ team: nextProps.team });
     }
+    if (nextProps.room != this.props.room) {
+      this.setState({ room: nextProps.room });
+    }
+    if (nextProps.points != this.props.points) {
+      this.setState({ totalPoints: nextProps.points });
+    }
   }
 
   calculateWinner(gameData) {
+    const initialAttackDefense = { attack: 0, defense: 0 };
     console.log('CALCULATE WINNER gamedata', gameData);
     // gameData.forEach((item) => {
     //   console.log('WINNER', item);
@@ -72,7 +85,7 @@ class CardGame extends React.Component {
         attack: acc.attack + curr.attack,
         defense: acc.defense + curr.defense,
       };
-    }, { attack: 0, defense: 0 });
+    }, initialAttackDefense);
     var t1r2 = team1.filter((entry) => {
       return entry.round === 2;
     }).reduce(function(acc, curr) {
@@ -80,7 +93,7 @@ class CardGame extends React.Component {
         attack: acc.attack + curr.attack,
         defense: acc.defense + curr.defense,
       };
-    }, { attack: 0, defense: 0 });
+    }, initialAttackDefense);
     var t1r3 = team1.filter((entry) => {
       return entry.round === 3;
     }).reduce(function(acc, curr) {
@@ -88,7 +101,7 @@ class CardGame extends React.Component {
         attack: acc.attack + curr.attack,
         defense: acc.defense + curr.defense,
       };
-    }, { attack: 0, defense: 0 });
+    }, initialAttackDefense);
     var t2r1 = team2.filter((entry) => {
       return entry.round === 1;
     }).reduce(function(acc, curr) {
@@ -96,7 +109,7 @@ class CardGame extends React.Component {
         attack: acc.attack + curr.attack,
         defense: acc.defense + curr.defense,
       };
-    }, { attack: 0, defense: 0 });
+    }, initialAttackDefense);
     var t2r2 = team2.filter((entry) => {
       return entry.round === 1;
     }).reduce(function(acc, curr) {
@@ -104,7 +117,7 @@ class CardGame extends React.Component {
         attack: acc.attack + curr.attack,
         defense: acc.defense + curr.defense,
       };
-    }, { attack: 0, defense: 0 });
+    }, initialAttackDefense);
     var t2r3 = team2.filter((entry) => {
       return entry.round === 1;
     }).reduce(function(acc, curr) {
@@ -112,19 +125,19 @@ class CardGame extends React.Component {
         attack: acc.attack + curr.attack,
         defense: acc.defense + curr.defense,
       };
-    }, { attack: 0, defense: 0 });
+    }, initialAttackDefense);
     var t1sum = team1.reduce(function(acc, curr) {
       return {
         attack: acc.attack + curr.attack,
         defense: acc.defense + curr.defense,
       };
-    }, { attack: 0, defense: 0 });
+    }, initialAttackDefense);
     var t2sum = team2.reduce(function(acc, curr) {
       return {
         attack: acc.attack + curr.attack,
         defense: acc.defense + curr.defense,
       };
-    }, { attack: 0, defense: 0 });
+    }, initialAttackDefense);
     var t1r1Net = t1r1.attack - t2r1.defense;
     var t1r2Net = t1r2.attack - t2r2.defense;
     var t1r3Net = t1r3.attack - t2r3.defense;
@@ -148,93 +161,59 @@ class CardGame extends React.Component {
       team1Results: t1sum,
       team2Results: t2sum,
     });
-  } 
-
-  generateRounds() {
-    var rounds = [];
-    for(var i = 0; i < this.props.rounds; i++) {
-      rounds.push(<CardGameRoundContainer team={this.props.team}/>);
-    }
-    return(
-      <View>
-        {rounds}
-      </View>
-    );
   }
 
-  toggleTeam() {
-    if (this.props.team === 1) {
-      this.props.setTeam(2);
-      // socket.emit('toggle team', this.props.user.char_id, this.props.roomId, 2);
-    } else {
-      this.props.setTeam(1);
-      // socket.emit('toggle team', this.props.user.char_id, this.props.roomId, 1);
-    }
-  }
+  // toggleTeam() {
+  //   if (this.props.team === 1) {
+  //     this.props.setTeam(2);
+  //     // socket.emit('toggle team', this.props.user.char_id, this.props.roomId, 2);
+  //   } else {
+  //     this.props.setTeam(1);
+  //     // socket.emit('toggle team', this.props.user.char_id, this.props.roomId, 1);
+  //   }
+  // }
 
-  setRoom(roomId) {
-    this.props.setRoom(roomId);
-  }
+  // setRoom(roomId) {
+  //   this.props.setRoom(roomId);
+  // }
 
-  pressAttack() {
-    let newValue;
-    let newPointsLeft;
-    if (this.state.pointsLeft > 0) {
-      newValue = this.state.attackPoints + 1;
-      newPointsLeft = this.state.pointsLeft - 1;
-    } else if (this.state.pointsLeft === 0 && this.state.attackPoints > 0) {
-      newValue = this.state.attackPoints - 1;
-      newPointsLeft = this.state.pointsLeft + 1;
-    } else {
-      newValue = this.state.attackPoints;
-      newPointsLeft = this.state.pointsLeft;
-      Alert.alert('error');
-    }
-    this.setState({
-      attackPoints: newValue,
-      pointsLeft: newPointsLeft,
-    });
-  }
+  // pressButton(stat) {
+  //   let newValue;
+  //   let newPointsLeft;
+  //   if (this.state.pointsLeft > 0) {
+  //     newValue = this.state[stat] + 1;
+  //     newPointsLeft = this.state.pointsLeft - 1;
+  //   } else if (this.state.pointsLeft === 0 && this.state[stat] > 0) {
+  //     newValue = this.state[stat] - 1;
+  //     newPointsLeft = this.state.pointsLeft + 1;
+  //   } else {
+  //     newValue = this.state[stat];
+  //     newPointsLeft = this.state.pointsLeft;
+  //     Alert.alert('error');
+  //   }
+  //   return {
+  //     newValue,
+  //     newPointsLeft,
+  //   };
+  // }
 
-  pressDefense() {
-    let newValue;
-    let newPointsLeft;
-    if (this.state.pointsLeft > 0) {
-      newValue = this.state.defensePoints + 1;
-      newPointsLeft = this.state.pointsLeft - 1;
-    } else if (this.state.pointsLeft === 0 && this.state.defensePoints > 0) {
-      newValue = this.state.defensePoints - 1;
-      newPointsLeft = this.state.pointsLeft + 1;
-    } else {
-      newValue = this.state.defensePoints;
-      newPointsLeft = this.state.pointsLeft;
-      Alert.alert('error');
-    }
-    this.setState({
-      defensePoints: newValue,
-      pointsLeft: newPointsLeft,
-    });
-  }
+  // pressAttack() {
+  //   var result = this.pressButton('attackPoints');
+  //   this.setState({
+  //     attackPoints: result.newValue,
+  //     // pointsLeft: result.newPointsLeft,
+  //     totalPoints: result.newPointsLeft,
 
-  pressLuck() {
-    let newValue;
-    let newPointsLeft;
-    if (this.state.pointsLeft > 0) {
-      newValue = this.state.luckPoints + 1;
-      newPointsLeft = this.state.pointsLeft - 1;
-    } else if (this.state.pointsLeft === 0 && this.state.luckPoints > 0) {
-      newValue = this.state.luckPoints - 1;
-      newPointsLeft = this.state.pointsLeft + 1;
-    } else {
-      newValue = this.state.luckPoints;
-      newPointsLeft = this.state.pointsLeft;
-      Alert.alert('error');
-    }
-    this.setState({
-      luckPoints: newValue,
-      pointsLeft: newPointsLeft,
-    });
-  }
+  //   });
+  // }
+
+  // pressDefense() {
+  //   var result = this.pressButton('defensePoints');
+  //   this.setState({
+  //     attackPoints: result.newValue,
+  //     pointsLeft: result.newPointsLeft,
+  //   });
+  // }
 
   updateHp() {
     this.setState({
@@ -244,17 +223,6 @@ class CardGame extends React.Component {
       }
     });
     socket.emit('update team hp', this.props.room, this.state.hp.team1, this.state.hp.team2);
-  }
-
-  joinRoom() {
-    for(var i = 0; i < this.state.roomMembersData.length; i++) {
-      if (this.state.roomMembersData[i].character_id === this.props.user.char_id && this.state.roomMembersData[i].room_id === this.state.roomInput.toString()) {
-        Alert.alert('Already Joined Room');
-        return false;
-      }
-      console.log(this.state.roomMembersData[i], this.props.user.char_id, this.state.roomInput);
-    }
-    socket.emit('join room', this.props.user.char_id, this.state.roomInput, this.state.team);
   }
 
   setTeam(num) {
@@ -282,14 +250,6 @@ class CardGame extends React.Component {
     return modifierValue;
   }
 
-  // joinTheRoom() {
-  //   socket.emit('join room', this.state.roomInput);
-  // }
-
-  // sendToAll() {
-  //   socket.emit('send to all', this.state.roomInput);
-  // }
-
   getResults() {
     socket.emit('get room results', this.props.room);
   }
@@ -305,7 +265,7 @@ class CardGame extends React.Component {
         <Text>
           This is the Card Game
         </Text>
-        <TextInput
+        {/*<TextInput
             style={styles.input}
             onChangeText={(text) => this.setState({ roomInput: text })}
             placeholder="Room Name"
@@ -313,22 +273,27 @@ class CardGame extends React.Component {
             maxLength = {60}
             autoCorrect = {false}
             returnKeyType = {'done'}
-        />  
+        />}
         <Text>
           Room Id: {this.props.room}
-        </Text>    
+        </Text>
         <TouchableOpacity onPress={() => this.setRoom(this.state.roomInput)} style={styles.button}>
           <Text>Set Room</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => this.toggleTeam()} style={styles.button}>
+          <Text>Toggle Team</Text>
+        </TouchableOpacity>
+        */}
+        <CardGameCreateContainer />
         <Text>
           Rounds: {this.props.rounds}
         </Text>
         <Text>
           Team: {this.props.team}
         </Text>
-        <TouchableOpacity onPress={() => this.toggleTeam()} style={styles.button}>
-          <Text>Toggle Team</Text>
-        </TouchableOpacity>
+        <Text>
+          Total Points Left: {this.props.points}
+        </Text>
         <Text>
           User id: {this.props.user.char_id}
         </Text>

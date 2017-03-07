@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ListView, StyleSheet, TouchableHighlight, Text } from 'react-native';
 import QuestRow from './QuestRow';
-import QuestCreate from './QuestCreate';
+import QuestCreateContainer from '../containers/QuestCreateContainer';
 import socket from '../socket/socket';
 import { updateQuests } from '../actions/actions'
 import geolib from 'geolib';
@@ -91,40 +91,8 @@ class QuestList extends React.Component {
     // console.log('quest list component PROPS', this.props);
     return (
       <View>
-        {/*<View> 
-          <TouchableHighlight
-            onPress={() => {
-              this.props.pingLocation();
-            }}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Ping Location</Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() => {
-              console.log('create watcher on press', this.props);
-              if (this.props.watcherSub.watcherSub) {
-                return;
-              } else {
-                this.props.createLocationWatcher();
-              }
-            }}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Create Location Watcher</Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() => {
-              console.log('remove watcher on press', this.props);
-              this.props.removeLocationWatcher(this.props.watcherSub.watcherSub);
-            }}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Remove Location Watcher</Text>
-          </TouchableHighlight>
-        </View> */}
         <View style={styles.createQuest}>
-          <QuestCreate onSubmitQuest={this.props.onSubmitQuest} user={this.props.user} lat={this.props.lat} lng={this.props.lng} />
+          <QuestCreateContainer />
         </View>
         <TouchableHighlight
           onPress={() => {

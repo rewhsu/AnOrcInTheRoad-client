@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableHighlight, TextInput, Slider, Picker, ScrollView } from 'react-native';
-import CreateQuestMap from '../screens/MapScreen';
 import { Font } from 'exponent';
+import QuickDrawContainer from '../containers/QuickDrawContainer';
+import BattleGameInput from './BattleGameInput';
+import FetchQuestInput from './FetchQuestInput';
 
 const styles = StyleSheet.create({
   container: {
@@ -119,16 +121,102 @@ class QuestCreate extends React.Component {
       name: null,
       location: null,
       experience: null,
-      questType: 'addFetchQuest',
+      questType: null,
       item_id: null,
       creator_id: null,
       lat: null,
       lng: null,
+      attack: null,
+      defense: null,
     };
+    this.quickDrawInput = this.quickDrawInput.bind(this);
+    this.battleGameInput = this.battleGameInput.bind(this);
+    this.fetchQuestInput = this.fetchQuestInput.bind(this);
+    // this.questNameText = this.questNameText.bind(this);
+    // this.questPicker = this.questPicker.bind(this);
+    // this.experienceSlider = this.experienceSlider.bind(this);
+    this.pickerResultElements = this.pickerResultElements.bind(this);
+    this.defaultInputElements = this.defaultInputElements.bind(this);
+    // this.textInput = this.textInput.bind(this);
+    this.setQuestType = this.setQuestType.bind(this);
   }
+
+  componentDidMount() {
+  }
+
   setModalVisible(visible) {
-    this.setState({modalVisible: visible});
+    this.setState({ modalVisible: visible });
   }
+  
+  setQuestType() {
+    // this.props.addPartialQuestInfo(this.state.name, this.state.location, this.state.questType, this.state.experience, this.props.user.char_id);
+    this.setModalVisible(true);
+  }
+
+  defaultInputElements() {
+    return (
+      <View>
+        {this.questNameText()}
+        {this.experienceSlider()}
+        {this.questPicker()}
+      </View>
+    );
+  }
+
+  pickerResultElements() {
+    const type = this.state.questType;
+    let pickerResult;
+    if (type === "addFetchQuest") {
+      pickerResult = this.fetchQuestInput();
+    } else if (type === "addBattleQuest") {
+      pickerResult = this.battleGameInput();
+    } else if (type === "addQuickDrawQuest") {
+      pickerResult = this.quickDrawInput();
+    } else {
+      pickerResult = null;
+    }
+    return (
+      <View>
+        {pickerResult}
+      </View>
+    );
+  }
+
+  fetchQuestInput() {
+    return (
+      <FetchQuestInput createQuest={this.createQuest} submitQuest={this.submitQuest} />
+    );
+  }
+
+  battleGameInput() {
+    return (
+      <BattleGameInput createQuest={this.createQuest} submitQuest={this.submitQuest} attack={this.props.stats.attack} defense={this.props.stats.defense} setBattlePlan={this.props.setBattlePlan} />
+    );
+  }
+
+  quickDrawInput() {
+    return (
+      <QuickDrawContainer createQuest={this.createQuest} />
+    );
+  }
+
+  submitQuest(questType) {
+    var context = this;
+    this.props.submitQuest(
+      context.state.name,
+      context.state.location,
+      context.props.questType,
+      context.state.experience,
+      context.props.lat,
+      context.props.lng,
+      context.props.user.char_id,
+      context.props.stats.attack,
+      context.props.stats.defense,
+      context.props.speed,
+    );
+    context.setModalVisible(false);
+  }
+
 
   render() {
     console.log('QUEST CREATE PROPS', this.props);
@@ -147,16 +235,7 @@ class QuestCreate extends React.Component {
               onChangeText={(name) => this.setState({ name })}
               placeholder="Quest Name"
               value={this.state.name}
-              maxLength = {60}
-              autoCorrect = {false}
-              returnKeyType = {'done'}
-            />
-            <TextInput
-              style={styles.input}
-              onChangeText={(location) => this.setState({ location })}
-              placeholder="Location"
-              value={this.state.location}
-              maxLength = {150}
+              maxLength = {30}
               autoCorrect = {false}
               returnKeyType = {'done'}
             />
@@ -165,61 +244,43 @@ class QuestCreate extends React.Component {
               style={styles.input}
               minimumValue={0}
               maximumValue={99999}
-              onSlidingComplete={(experience) => this.setState({ experience })}
+              onSlidingComplete={(experience) => {
+                var exp = Math.round(experience);
+                this.setState({ experience: exp });
+              }}
             />
-            <TextInput
-              style={styles.input}
-              onChangeText={(item_id) => this.setState({ item_id })}
-              placeholder="Item Reward"
-              value={this.state.item_id}
-              maxLength = {60}
-              autoCorrect = {false}
-              returnKeyType = {'done'}
-            />            
             <Picker
               selectedValue={this.state.questType}
               onValueChange={(itemValue) => this.setState({ questType: itemValue })}
               style={styles.picker}
             >
               <Picker.Item label="Fetch Quest" value="addFetchQuest" />
-              <Picker.Item label="Battle - Solo" value="addBattleSoloQuest" />
-              <Picker.Item label="Battle - Co-op" value="addCoopSoloQuest" />
+              <Picker.Item label="Battle" value="addBattleQuest" />
+              <Picker.Item label="Quickdraw" value="addQuickDrawQuest" />
             </Picker>
-            <TouchableHighlight
-              onPress={() => {
-                this.props.onSubmitQuest(
-                  this.state.name,
-                  this.state.location,
-                  this.state.questType,
-                  this.state.experience,
-                  this.props.lat,
-                  this.props.lng,
-                  this.props.user.char_id,
-                  this.state.item_id,
-                );
-                this.setModalVisible(false);
-              }}
-              style={styles.submitButton}
-            >
-              <Text style={styles.buttonText}>Add Quest</Text>
+            {this.pickerResultElements()}
+            <Text>
+              Quest Type: {this.props.questType}
+            </Text>
+            <Text>
+              Quick Draw Speed: {this.props.speed}
+            </Text>
+            <Text>
+              Battle Stats - Attack: {this.props.stats.attack}
+            </Text>
+            <Text>
+              Battle Stats - Defense: {this.props.stats.defense}
+            </Text>
+            <TouchableHighlight onPress={() => this.submitQuest()} style={styles.closeButton} >
+              <Text style={styles.buttonText}>Submit</Text>
             </TouchableHighlight>
-            <TouchableHighlight
-              onPress={() => {
-                this.setModalVisible(!this.state.modalVisible);
-              }}
-              style={styles.closeButton}
-            >
+            <TouchableHighlight onPress={() => this.setModalVisible(false)} style={styles.closeButton} >
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableHighlight>
           </ScrollView>
         </Modal>
         <View>
-          <TouchableHighlight
-            onPress={() => {
-              this.setModalVisible(true);
-            }}
-            style={styles.addButton}
-          >
+          <TouchableHighlight onPress={() => this.setModalVisible(true)} style={styles.addButton}>
             <Text style={styles.buttonText}>Create New Quest</Text>
           </TouchableHighlight>
         </View>

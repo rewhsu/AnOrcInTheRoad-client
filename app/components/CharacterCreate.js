@@ -134,7 +134,6 @@ class CharacterCreate extends React.Component {
     console.log('CHARACTER CREATE PROPS', this.props);
     return (
       <View style={styles.container}>
-  
           <ScrollView contentContainerStyle={styles.modal}>
             <Text style={styles.title} >Create A Character</Text>
             <TextInput
@@ -177,7 +176,6 @@ class CharacterCreate extends React.Component {
               <Text style={styles.buttonText}>Close Menu</Text>
             </TouchableHighlight>
           </ScrollView>
-
         <View>
          
         </View>
@@ -240,7 +238,7 @@ class CharacterCreate extends React.Component {
           <TouchableHighlight
             onPress={() => {
               this.setModalVisible(true);
-            }}     
+            }}  
             style={styles.addButton}
           >
             <Text style={styles.buttonText}>Create New Character</Text>

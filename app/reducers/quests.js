@@ -11,6 +11,9 @@ const quest = (state = {}, action) => {
         lat: action.lat,
         lng: action.lng,
         item_id: action.item_id,
+        attack: action.attack,
+        defense: action.defense,
+        drawSpeed: action.drawSpeed,
       };
     default:
       return quest;

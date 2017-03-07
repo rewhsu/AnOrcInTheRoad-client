@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import { setTeam, setRoom } from '../actions/actions';
-import CardGame from '../components/CardGame';
-import Exponent from 'exponent';
+import CardGameCreate from '../components/CardGameCreate';
 import socket from '../socket/socket';
 
 
@@ -43,9 +42,9 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-const CardGameContainer = connect(
+const CardGameCreateContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CardGame);
+)(CardGameCreate);
 
-export default CardGameContainer;
+export default CardGameCreateContainer;

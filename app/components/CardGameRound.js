@@ -26,10 +26,8 @@ class CardGameRound extends React.Component {
       error: false,
       roundResults: [],
       team: this.props.team,
+      totalPoints: this.props.totalPoints,
     };
-  }
-
-  componentDidMount() {
   }
 
   componentWillReceiveProps(nextProps) {
@@ -41,63 +39,39 @@ class CardGameRound extends React.Component {
     }
   }
 
-  pressAttack() {
+  pressButton(stat) {
     let newValue;
     let newPointsLeft;
     if (this.state.pointsLeft > 0) {
-      newValue = this.state.attackPoints + 1;
-      newPointsLeft = this.state.pointsLeft - 1;
-    } else if (this.state.pointsLeft === 0 && this.state.attackPoints > 0) {
-      newValue = this.state.attackPoints - 1;
-      newPointsLeft = this.state.pointsLeft + 1;
+      newValue = this.state[stat] + 1;
+      newPointsLeft = this.state.totalPoints - 1;
+    } else if (this.state.pointsLeft === 0 && this.state[stat] > 0) {
+      newValue = this.state[stat] - 1;
+      newPointsLeft = this.state.totalPoints + 1;
     } else {
-      newValue = this.state.attackPoints;
-      newPointsLeft = this.state.pointsLeft;
+      newValue = this.state[stat];
+      newPointsLeft = this.state.totalPoints;
       Alert.alert('error');
     }
+    this.props.setPoints(newPointsLeft);
+    return {
+      newValue,
+      newPointsLeft,
+    };
+  }
+
+  pressAttack() {
+    var result = this.pressButton('attackPoints');
     this.setState({
-      attackPoints: newValue,
-      pointsLeft: newPointsLeft,
+      attackPoints: result.newValue,
     });
   }
 
   pressDefense() {
-    let newValue;
-    let newPointsLeft;
-    if (this.state.pointsLeft > 0) {
-      newValue = this.state.defensePoints + 1;
-      newPointsLeft = this.state.pointsLeft - 1;
-    } else if (this.state.pointsLeft === 0 && this.state.defensePoints > 0) {
-      newValue = this.state.defensePoints - 1;
-      newPointsLeft = this.state.pointsLeft + 1;
-    } else {
-      newValue = this.state.defensePoints;
-      newPointsLeft = this.state.pointsLeft;
-      Alert.alert('error');
-    }
+    var result = this.pressButton('defensePoints');
     this.setState({
-      defensePoints: newValue,
-      pointsLeft: newPointsLeft,
-    });
-  }
-
-  pressLuck() {
-    let newValue;
-    let newPointsLeft;
-    if (this.state.pointsLeft > 0) {
-      newValue = this.state.luckPoints + 1;
-      newPointsLeft = this.state.pointsLeft - 1;
-    } else if (this.state.pointsLeft === 0 && this.state.luckPoints > 0) {
-      newValue = this.state.luckPoints - 1;
-      newPointsLeft = this.state.pointsLeft + 1;
-    } else {
-      newValue = this.state.luckPoints;
-      newPointsLeft = this.state.pointsLeft;
-      Alert.alert('error');
-    }
-    this.setState({
-      luckPoints: newValue,
-      pointsLeft: newPointsLeft,
+      defensePoints: result.newValue,
+      totalPoints: result.newPointsLeft,
     });
   }
 
@@ -179,9 +153,6 @@ class CardGameRound extends React.Component {
           <Text>
             Round: {this.props.round}
           </Text>
-          <Text>
-            Points to Spend: {this.state.pointsLeft}
-          </Text>
           {this.state.showInput ?
           <View>
             <View style={styles.buttonContainer}>
@@ -191,15 +162,12 @@ class CardGameRound extends React.Component {
               <TouchableOpacity onPress={() => this.pressDefense()} style={[styles.button, styles.middleButton]}>
                 <Text>Defense {this.state.defensePoints}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => this.pressLuck()} style={styles.button}>
-                <Text>Luck {this.state.luckPoints}</Text>
-              </TouchableOpacity>
             </View>
-            <View style={styles.buttonContainer}>
+            {/*<View style={styles.buttonContainer}>
               <TouchableOpacity onPress={() => this.submitPoints()} style={styles.button}>
                 <Text>Submit Points</Text>
               </TouchableOpacity>
-            </View>
+            </View>*/}
             {/*<View style={styles.buttonContainer}>
               <TouchableOpacity onPress={() => this.createRoundResult(this.props.round)} style={styles.button}>
                 <Text>calculateRoundResult</Text>
@@ -220,7 +188,7 @@ class CardGameRound extends React.Component {
               <Text>Round: {this.props.round}</Text>
               <Text>Attack:{this.state.adjustedAttack/this.state.modifierConstant}</Text>
               <Text>Defense:{this.state.adjustedDefense/this.state.modifierConstant}</Text>
-              <Text>Luck:{this.state.adjustedLuck/this.state.modifierConstant}</Text>
+              {/*<Text>Luck:{this.state.adjustedLuck/this.state.modifierConstant}</Text>*/}
             </View>
           </View>
         : null}

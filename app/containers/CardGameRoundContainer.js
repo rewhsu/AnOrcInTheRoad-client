@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { sendZing, updateCharacter } from '../actions/actions';
+import { setPoints } from '../actions/actions';
 import CardGameRound from '../components/CardGameRound';
 import Exponent from 'exponent';
 import socket from '../socket/socket';
@@ -21,6 +21,9 @@ const mapDispatchToProps = (dispatch) => {
     test: () => console.log('test'),
     getCharacter: (userId) => {
       socket.emit('get character', userId);
+    },
+    setPoints: (points) => {
+      dispatch(setPoints(points));
     },
   };
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TouchableHighlight, TextInput, ScrollView, Slider, Picker, Image } from 'react-native';
+import { View, Text } from 'react-native';
 
 export default class CardGameResults extends React.Component {
   constructor(props) {
