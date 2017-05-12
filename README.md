@@ -4,6 +4,15 @@
 
 > Server Repository
 
+## Screenshots
+![]http://imgur.com/ActwbId
+![]http://imgur.com/NGO7hWo
+![]http://imgur.com/ppXldM5
+![]http://imgur.com/BtBpVC8
+![]http://imgur.com/pl93Hlh
+![]http://imgur.com/6JZzMBx
+
+
 ## Team
 
   - __Product Owner__: Andrew Hsu
