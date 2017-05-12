@@ -1,10 +1,10 @@
 # An Orc In The Road
 
+![image](https://cloud.githubusercontent.com/assets/12904628/25980961/019963b0-3687-11e7-9f8e-3c889c5da93b.png)
+
 > Bringing a fairytale to life using augmented reality.
 
-> Server Repository
-
-![image](https://cloud.githubusercontent.com/assets/12904628/25980961/019963b0-3687-11e7-9f8e-3c889c5da93b.png)
+> Client Repository
 
 ## Team
 
